@@ -13,7 +13,7 @@ Right now we only have test RPMs. So, if you are brave...
 ```sh
 sudo dnf config-manager --set-disabled ipfs-stable
 sudo dnf config-manager --set-enabled ipfs-testing
-sudo dnf list --refresh|grep ipfs
+sudo dnf list |grep ipfs
 ```
 
 ## Install `go-ipfs` and add yourself to the `ipfsgroup`...
