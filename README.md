@@ -1,6 +1,6 @@
-# ipfs-rpm - Interplanetary Filesystem RPMs for Fedora Linux
+# Interplanetary Filesystem (IPFS) RPMs for Fedora Linux
 
-This is still in testing. Quick start...
+This is all still in testing. Quick start...
 
 ## Install repository configuration RPM
 ```sh
