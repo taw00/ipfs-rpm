@@ -4,6 +4,7 @@ This is all still in testing. Quick start...
 
 ## Install repository configuration RPM
 ```sh
+# Install Todd's public GPG key and the toddpkgs-ipfs-repo package
 sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo-1.0-1.fc27.taw0.noarch.rpm
 ```
@@ -12,6 +13,7 @@ sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/todd
 
 Right now we only have test RPMs. So, if you are brave...
 ```sh
+# Flip the enabled repository from stable to testing
 sudo dnf config-manager --set-disabled ipfs-stable
 sudo dnf config-manager --set-enabled ipfs-testing
 sudo dnf list |grep ipfs
@@ -20,9 +22,11 @@ sudo dnf list |grep ipfs
 ## Install `go-ipfs` and add yourself to the `ipfsgroup`...
 
 ```sh
+# Install IPFS
 sudo dnf install -y go-ipfs
 ```
 ```sh
+# Join the ipfsgroup so you have access to ipfs, the application
 sudo usermod -a -G ipfsgroup $USER
 newgrp -
 ```
@@ -30,6 +34,7 @@ newgrp -
 ## Where is everything installed?
 ```sh
 rpm -ql go-ipfs
+ll -h /usr/bin/ipfs
 ```
 
 ## How to use it?
