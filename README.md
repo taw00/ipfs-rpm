@@ -16,15 +16,17 @@ sudo dnf config-manager --set-enabled ipfs-testing
 sudo dnf list --refresh|grep ipfs
 ```
 
-## Install go-ipfs and add yourself to the ipfsgroup, the reference implementation...
+## Install `go-ipfs` and add yourself to the `ipfsgroup`...
 
 ```sh
 sudo dnf install -y go-ipfs
+```
+```sh
 sudo usermod -a -G ipfsgroup $USER
 newgrp -
 ```
 
-## Where install?
+## Where is everything installed?
 ```sh
 rpm -ql go-ipfs
 ```
