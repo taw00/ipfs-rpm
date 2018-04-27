@@ -4,6 +4,7 @@ This is all still in testing. Quick start...
 
 ## Install repository configuration RPM
 ```sh
+sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo-1.0-1.fc27.taw0.noarch.rpm
 ```
 
