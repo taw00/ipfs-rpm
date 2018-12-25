@@ -1,4 +1,5 @@
 # go-ipfs.spec
+# vim:tw=0:ts=2:sw=2:et:
 #
 # IPFS implementation in Go.
 #
@@ -16,97 +17,68 @@ Name: go-ipfs
 Summary: IPFS reference implementation.
 
 %define targetIsProduction 0
-%define includeSnapinfo 1
-%define includeMinorbump 1
 %define sourceIsPrebuilt 0
 
 
-# VERSION
+# VERSION
 # eg. 1.0.1
 %define vermajor 0.4
-%define verminor 14
+%define verminor 18
 Version: %{vermajor}.%{verminor}
 
 
-# RELEASE
-# if production - "targetIsProduction 1"
-%define pkgrel_prod 1
-
-# if pre-production - "targetIsProduction 0"
-# eg. 0.3.testing
-%define pkgrel_preprod 0
-%define extraver_preprod 1
-%define snapinfo testing
-#%%define snapinfo testing.20180424
-#%%define snapinfo beta2.41d5c63.gh
-
-# if sourceIsPrebuilt (rp=repackaged)
-# eg. 1.rp (prod) or 0.3.testing.rp (pre-prod)
-%define snapinfo_rp rp
-
-# if includeMinorbump
-%define minorbump taw0
-
-# Building the release string (don't edit this)...
-
-%if %{targetIsProduction}
-  %if %{includeSnapinfo}
-    %{warn:"Warning: target is production and yet you want snapinfo included. This is not typical."}
-  %endif
-%else
-  %if ! %{includeSnapinfo}
-    %{warn:"Warning: target is pre-production and yet you elected not to incude snapinfo (testing, beta, ...). This is not typical."}
-  %endif
+# RELEASE - can edit this
+%define _pkgrel 1
+%if ! %{targetIsProduction}
+  %define _pkgrel 0.1
 %endif
 
-# release numbers
-%undefine _relbuilder_pt1
-%if %{targetIsProduction}
-  %define _pkgrel %{pkgrel_prod}
-  %define _relbuilder_pt1 %{pkgrel_prod}
-%else
-  %define _pkgrel %{pkgrel_preprod}
-  %define _extraver %{extraver_preprod}
-  %define _relbuilder_pt1 %{_pkgrel}.%{_extraver}
-%endif
+# MINORBUMP - can edit this
+%define minorbump taw
 
-# snapinfo and repackage (pre-built) indicator
-%undefine _relbuilder_pt2
-%if ! %{includeSnapinfo}
-  %undefine snapinfo
+#
+# Build the release string - don't edit this
+#
+
+# -- snapinfo
+%define _snapinfo testing
+%define _snapinfo_rp rp
+%if %{targetIsProduction}
+  %undefine _snapinfo
 %endif
 %if ! %{sourceIsPrebuilt}
-  %undefine snapinfo_rp
+   %undefine _snapinfo_rp
 %endif
-%if 0%{?snapinfo_rp:1}
-  %if 0%{?snapinfo:1}
-    %define _relbuilder_pt2 %{snapinfo}.%{snapinfo_rp}
+
+%if 0%{?_snapinfo:1}
+  %if 0%{?_snapinfo_rp:1}
+    %define snapinfo %{_snapinfo}.%{_snapinfo_rp}
   %else
-    %define _relbuilder_pt2 %{snapinfo_rp}
+    %define snapinfo %{_snapinfo}
   %endif
 %else
-  %if 0%{?snapinfo:1}
-    %define _relbuilder_pt2 %{snapinfo}
+  %if 0%{?_snapinfo_rp:1}
+    %define snapinfo %{_snapinfo_rp}
+  %else
+    %undefine snapinfo
   %endif
 %endif
 
-# put it all together
-# pt1 will always be defined. pt2 and minorbump may not be
-%define _release %{_relbuilder_pt1}
-%if ! %{includeMinorbump}
-  %undefine minorbump
-%endif
-%if 0%{?_relbuilder_pt2:1}
+
+# -- release
+# pkgrel will always be defined, snapinfo and minorbump may not be
+%define _release %{_pkgrel}
+%if 0%{?snapinfo:1}
   %if 0%{?minorbump:1}
-    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}.%{minorbump}
+    %define _release %{_pkgrel}.%{snapinfo}%{?dist}.%{minorbump}
   %else
-    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}
+    %define _release %{_pkgrel}.%{snapinfo}%{?dist}
   %endif
 %else
   %if 0%{?minorbump:1}
-    %define _release %{_relbuilder_pt1}%{?dist}.%{minorbump}
+    %define _release %{_pkgrel}%{?dist}.%{minorbump}
   %else
-    %define _release %{_relbuilder_pt1}%{?dist}
+    %define _release %{_pkgrel}%{?dist}
   %endif
 %endif
 
@@ -122,7 +94,10 @@ Source1: %{name}-%{vermajor}-contrib.tar.gz
 # But if you need something specific...
 #Requires:
 
-BuildRequires: tree git
+%if ! %{targetIsProduction}
+BuildRequires: tree
+%endif
+BuildRequires: git
 
 # Go language specific stuff.
 # https://fedoraproject.org/wiki/PackagingDrafts/Go
@@ -136,22 +111,17 @@ Provides:       golang(%{import_path}/dict) = %{version}-%{release}
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
 BuildRequires:  golang
 
-# CentOS/RHEL/EPEL can't do "Suggests:"
-%if 0%{?fedora:1}
-#Suggests:
-%endif
-
 License: MIT
 URL: https://github.com/taw00/ipfs-rpm
-# Group is deprecated. Don't use it. Left this here as a reminder...
+# Group is deprecated. Don't use it. Left this here as a reminder...
 # https://fedoraproject.org/wiki/RPMGroups 
 #Group: Unspecified
 
-# CHANGE or DELETE this for your package
+# CHANGE or DELETE this for your package
 # System user for the systemd ipfsd.service.
-# If you want to retain the systemd service configuration and you therefore
+# If you want to retain the systemd service configuration and you therefore
 # change this, you will have to dig into the various -contrib configuration
-# files to change things there as well. 
+# files to change things there as well.
 %define systemuser ipfs
 %define systemgroup ipfsgroup
 
@@ -172,9 +142,9 @@ URL: https://github.com/taw00/ipfs-rpm
 %define _hardened_build 1
 
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               {name}-1.0
-#      \_ srccodetree       \_{name}-1.0.1
-#      \_ srccontribtree    \_{name}-1.0-contrib
+#   srcroot               go-ipfs-{vermajor}
+#      \_ srccodetree       \_go-ipfs-{version}
+#      \_ srccontribtree    \_go-ipfs-{vermajor}-contrib
 %define srcroot %{name}-%{vermajor}
 %define srccodetree %{name}-%{version}
 %define srccontribtree %{name}-%{vermajor}-contrib
@@ -202,15 +172,25 @@ For more info see: https://github.com/ipfs/ipfs.
 
 %prep
 # Prep section starts us in directory .../BUILD -or- {_builddir}
-#
+
+%if 0%{?rhel} && 0%{?rhel} < 8
+  %{error: "EL7 builds no longer supported due to outdated build tools (golang version in particular)"}
+  exit 1
+%endif
+
+%if 0%{?fedora} && 0%{?fedora} < 29
+  %{error: "Build requires Fedora 29 or better due to outdated build tools (golang version in particular)"}
+  exit 1
+%endif
+
 # I create a root dir and place the source and contribution trees under it.
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               {name}-<vermajor>
-#      \_ srccodetree        \_{name}-<version>
+#   srcroot               go-ipfs-{vermajor}
+#      \_ srccodetree        \_go-ipfs-{version}
 #      \_ go                 \_go/src/github.com/ipfs/go-ipfs -> .../{name}-{version}
-#      \_ srccontribtree     \_{name}-<vermajor>-contrib
+#      \_ srccontribtree     \_go-ipfs-{vermajor}-contrib
 
-mkdir %{srcroot}
+mkdir -p %{srcroot}
 # sourcecode
 %setup -q -T -D -a 0 -n %{srcroot}
 # contrib
@@ -221,14 +201,18 @@ mkdir -p %{gopathtosrc} %{_gobin}
 rmdir %{gopathtosrc} # pop the last dir
 ln -s %{_builddir}/%{srcroot}/%{srccodetree} %{gopathtosrc}
 ls -l %{gopathtosrc}
+%if ! %{targetIsProduction}
 tree -d %{_builddir}/%{srcroot}/%{srccodetree}
+%endif
 
 
 # Libraries ldconfig file - we create it, because lib or lib64
 echo "%{_libdir}/%{name2}" > %{srccontribtree}/etc-ld.so.conf.d_%{name2}.conf
 
 # For debugging purposes...
+%if ! %{targetIsProduction}
 cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
+%endif
 
 
 %build
@@ -237,6 +221,9 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 cd %{srccodetree}
 export GOPATH=%{_gopath}
 export GOBIN=%{_gobin}
+# temporary - for testing RPM basic build structure
+# (uncomment this touch and comment out make install)
+#touch %{_gobin}/ipfs
 make install
 
 
@@ -254,7 +241,7 @@ make install
 #   _prefix = /usr
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
 #   https://fedoraproject.org/wiki/Packaging:RPMMacros
-# These two are defined in RPM versions in newer versions of Fedora (not el7)
+# These two are defined in RPM versions in newer versions of Fedora (not el7)
 %define _tmpfilesdir /usr/lib/tmpfiles.d
 %define _unitdir /usr/lib/systemd/system
 
@@ -268,12 +255,23 @@ install -d -m755 -p %{buildroot}%{_bindir}
 install -d %{buildroot}%{_sysconfdir}/%{name2}
 # /var/lib/ipfs/
 install -d %{buildroot}%{_sharedstatedir}/%{name2}
+install -d %{buildroot}%{_sharedstatedir}/%{name2}/repo
 # /var/log/ipfs/
 install -d -m750 %{buildroot}%{_localstatedir}/log/%{name2}
 # /usr/share/ipfs/
 install -d %{buildroot}%{installtree}
 
-# Systemd... - Do we want to make ipfs a service?
+# /ipfs/ -- directory for mountpoints ipfs and ipfn
+# Might end up building script for folks to do by username: /ipfs/todd/
+# The systemd service allocates /ipfs/ipfsd.service/[ipfs,ipfn]
+install -d %{buildroot}/%{name2}
+install -d %{buildroot}/%{name2}/%{name2}d
+install -d %{buildroot}/%{name2}/%{name2}d.service/ipfs
+install -d %{buildroot}/%{name2}/%{name2}d.service/ipfn
+#install -d %%{buildroot}%%{name2}/%%{ipfs}
+#install -d %%{buildroot}%%{name2}/%%{ipfn}
+
+# Systemd...
 # /usr/lib/systemd/system/ -- 
 install -d %{buildroot}%{_unitdir}
 # /etc/sysconfig/ipfsd-scripts/
@@ -283,17 +281,29 @@ install -d %{buildroot}%{_tmpfilesdir}
 
 # For now, we just install the binary in /usr/bin
 # Only members of the ipfsgroup can do stuff with ipfs
-install -D -m750 %{_gobin}/%{name2} %{buildroot}%{_bindir}/
+install -D -m750 %{_gobin}/ipfs %{buildroot}%{_bindir}/
 
 # Bash completion
 # /usr/share/bash-completion/completions/...
-install -D -m644 %{srccodetree}/misc/completion/%{name2}-completion.bash %{buildroot}%{_datadir}/bash-completion/completions/%{name2}
+install -D -m644 %{srccodetree}/misc/completion/ipfs-completion.bash %{buildroot}%{_datadir}/bash-completion/completions/%{name2}
+
+# Systemd services
+install -D -m600 -p %{srccontribtree}/systemd/etc-sysconfig_ipfsd %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-ipfsd-scripts_send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/send-email.sh
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-ipfsd-scripts_ipfsd-init.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/%{name2}d-init.sh
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-ipfsd-scripts_write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/write-to-journal.sh
+install -D -m644 -p %{srccontribtree}/systemd/usr-lib-systemd-system_ipfsd.service %{buildroot}%{_unitdir}/%{name2}d.service
+install -D -m644 -p %{srccontribtree}/systemd/usr-lib-tmpfiles.d_ipfsd.conf %{buildroot}%{_tmpfilesdir}/%{name2}d.conf
+
+# Service definition files for firewalld
+install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_ipfs-api.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name2}-api.xml
+install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_ipfs-gateway.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name2}-gateway.xml
 
 
 %files
-# CREATING RPM:
-# - files step (final step)
-# - This step makes a declaration of ownership of any listed directories
+# CREATING RPM:
+# - files step (final step)
+# - This step makes a declaration of ownership of any listed directories
 #   or files
 # - The install step should have set permissions and ownership correctly,
 #   but of final tweaking is often done in this section
@@ -307,32 +317,57 @@ install -D -m644 %{srccodetree}/misc/completion/%{name2}-completion.bash %{build
 %doc %{srccodetree}/docs/datastores.md %{srccodetree}/docs/experimental-features.md
 %doc %{srccodetree}/docs/releases.md
 
-# The directories...
+# The directories...
 # /etc/ipfs/
 #%%dir %%attr(750,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/%%{name2}
-# /var/lib/ipfs/ -- also ipfs user's $HOME dir
-%dir %attr(750,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name2}
 # /var/log/ipfs/
 #%%dir %%attr(750,%%{systemuser},%%{systemgroup}) %%{_localstatedir}/log/%%{name2}
 # /etc/sysconfig/ipfsd-scripts/
 #%%dir %%attr(755,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/sysconfig/%%{name2}d-scripts
 # /usr/share/ipfs/
 #%%dir %%attr(755,%%{systemuser},%%{systemgroup}) %%{_datadir}/%%{name2}
-# /usr/[lib,lib64]/ipfs/
+# /usr/[lib,lib64]/ipfs/
 #%%dir %%attr(755,root,root) %%{_libdir}/%%{name2}
+
+# /var/lib/ipfs/ -- also ipfs user's $HOME dir
+%dir %attr(750,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name2}
+# repo needs to be more secure since there is a private key involved...
+%dir %attr(700,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name2}/repo
+
+# firewalld service definition
+%{_prefix}/lib/firewalld/services/%{name2}-api.xml
+%{_prefix}/lib/firewalld/services/%{name2}-gateway.xml
+
+# systemd service definitions, scripts, configuration
+%{_unitdir}/%{name2}d.service
+%{_tmpfilesdir}/%{name2}d.conf
+%config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/%{name2}d
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/send-email.sh
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/%{name2}d-init.sh
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/write-to-journal.sh
+
+# application configuration when run as systemd service
+#%%config(noreplace) %%attr(640,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/ipfs/ipfs.conf
+
+
+# Mountpoints
+%dir %attr(770,%{systemuser},%{systemgroup}) /%{name2}
+%dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service
+%dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipfs
+%dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipfn
 
 # Bash completion
 # /usr/share/bash-completion/completions/...
 %{_datadir}/bash-completion/completions/%{name2}
 
 # Binaries
-%{_bindir}/ipfs
+%attr(750,%{systemuser},%{systemgroup}) %{_bindir}/ipfs
 
 
 %pre
-# INSTALLING THE RPM:
-# - pre section (runs before the install process)
-# - system users are added if needed. Any other roadbuilding.
+# INSTALLING THE RPM:
+# - pre section (runs before the install process)
+# - system users are added if needed. Any other roadbuilding.
 #
 # You have to be a member of ipfsgroup in order to use ipfs
 # /var/lib/ipfs/ is the homedir of ipfs
@@ -341,24 +376,24 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 
 
 %post
-# INSTALLING THE RPM:
-# - post section (runs after the install process is complete)
+# INSTALLING THE RPM:
+# - post section (runs after the install process is complete)
 #
 umask 007
-# refresh library context
+# refresh library context
 /sbin/ldconfig > /dev/null 2>&1
-# refresh systemd context
+# refresh systemd context
 test -e %{_sysconfdir}/%{name2}/%{name2}.conf && %systemd_post %{name2}d.service
 # refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %postun
-# UNINSTALLING THE RPM:
-# - postun section (runs after an RPM has been removed)
+# UNINSTALLING THE RPM:
+# - postun section (runs after an RPM has been removed)
 #
 umask 007
-# refresh library context
+# refresh library context
 /sbin/ldconfig > /dev/null 2>&1
 # refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
@@ -371,5 +406,17 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
-* Thu Apr 26 2018 Todd Warner <t0dd@protonmail.com> 0.4.14-0.1.testing.taw0
-- Initial test build.
+* Tue Dec 25 2018 Todd Warner <t0dd_at_protonmail.com> 0.4.18-0.1.testing.taw
+  - 0.4.18
+  - spec file updates
+
+* Thu May 10 2018 Todd Warner <t0dd_at_protonmail.com> 0.4.14-0.2.testing.taw1
+  - spec file: mkdir -p and not just mkdir
+
+* Tue May 1 2018 Todd Warner <t0dd_at_protonmail.com> 0.4.14-0.2.testing.taw0
+  - Default mountpoints added. Not sure if this correct best practice.
+  - Systemd service and associated configuration and scripts were added.
+  - firewalld service description files added.
+
+* Thu Apr 26 2018 Todd Warner <t0dd_at_protonmail.com> 0.4.14-0.1.testing.taw[n]
+  - Initial test build.

@@ -6,7 +6,7 @@ This is all still in testing. Quick start...
 ```sh
 # Install Todd's public GPG key and the toddpkgs-ipfs-repo package
 sudo rpm --import https://keybase.io/toddwarner/key.asc
-sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo-1.0-1.fc27.taw0.noarch.rpm
+sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo.noarch.rpm
 ```
 
 ## Turn on test repo
@@ -16,7 +16,7 @@ Right now we only have test RPMs. So, if you are brave...
 # Flip the enabled repository from stable to testing
 sudo dnf config-manager --set-disabled ipfs-stable
 sudo dnf config-manager --set-enabled ipfs-testing
-sudo dnf list |grep ipfs
+sudo dnf list | grep ipfs
 ```
 
 ## Install `go-ipfs` and add yourself to the `ipfsgroup`...
