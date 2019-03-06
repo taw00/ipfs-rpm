@@ -309,12 +309,14 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_ipfs-
 #
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
-%doc %{srccodetree}/docs/plugins.md %{srccodetree}/docs/transports.md
-%doc %{srccodetree}/docs/implement-api-bindings.md %{srccodetree}/docs/github-issue-guide.md
-%doc %{srccodetree}/docs/fuse.md %{srccodetree}/docs/file-transfer.md
-%doc %{srccodetree}/docs/debug-guide.md %{srccodetree}/docs/config.md
-%doc %{srccodetree}/docs/datastores.md %{srccodetree}/docs/experimental-features.md
-%doc %{srccodetree}/docs/releases.md
+%doc %{srccodetree}/CHANGELOG.md
+%doc %{srccodetree}/CONTRIBUTING.md
+%doc %{srccodetree}/CODEOWNERS
+%doc %{srccodetree}/ISSUE_TEMPLATE.md
+%doc %{srccodetree}/docs/*.md
+%doc %{srccodetree}/docs/developer-certificate-of-origin
+%doc %{srccodetree}/docs/*.png
+%doc %{srccodetree}/docs/AUTHORS
 
 # The directories...
 # /etc/ipfs/
@@ -407,6 +409,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %changelog
 * Wed Mar 06 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.19-0.1.testing.taw
   - 0.4.19
+  - the manifest of docs changed a bit... updated in specfile
 
 * Tue Dec 25 2018 Todd Warner <t0dd_at_protonmail.com> 0.4.18-0.1.testing.taw
   - 0.4.18
