@@ -23,7 +23,7 @@ Summary: IPFS reference implementation.
 # VERSION
 # eg. 1.0.1
 %define vermajor 0.4
-%define verminor 18
+%define verminor 19
 Version: %{vermajor}.%{verminor}
 
 
@@ -35,6 +35,7 @@ Version: %{vermajor}.%{verminor}
 
 # MINORBUMP - can edit this
 %define minorbump taw
+#%%define minorbump taw
 
 #
 # Build the release string - don't edit this
@@ -64,8 +65,6 @@ Version: %{vermajor}.%{verminor}
   %endif
 %endif
 
-
-# -- release
 # pkgrel will always be defined, snapinfo and minorbump may not be
 %define _release %{_pkgrel}
 %if 0%{?snapinfo:1}
@@ -95,7 +94,7 @@ Source1: %{name}-%{vermajor}-contrib.tar.gz
 #Requires:
 
 %if ! %{targetIsProduction}
-BuildRequires: tree
+BuildRequires: tree vim-enhanced less findutils
 %endif
 BuildRequires: git
 
@@ -406,6 +405,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Wed Mar 06 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.19-0.1.testing.taw
+  - 0.4.19
+
 * Tue Dec 25 2018 Todd Warner <t0dd_at_protonmail.com> 0.4.18-0.1.testing.taw
   - 0.4.18
   - spec file updates
