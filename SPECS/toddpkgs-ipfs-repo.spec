@@ -1,11 +1,11 @@
 Name:		toddpkgs-ipfs-repo
 Version:	1.0
-Release:	1%{?dist}.taw0
+Release:	2%{?dist}.taw
 Summary:	Repository configuration to enable management of IPFS packages
 
 License:	MIT
 URL:		https://github.com/taw00/ipfs-rpm
-Source0:	https://raw.githubusercontent.com/taw00/ipfs-rpm/master/source/SOURCES/toddpkgs-ipfs-repo-1.0.tar.gz
+Source0:	https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/toddpkgs-ipfs-repo-1.0.tar.gz
 BuildArch:	noarch
 
 # CentOS/RHEL/EPEL can't do "Suggests:"
@@ -38,9 +38,8 @@ For more info see: https://github.com/ipfs/ipfs
 
 ---
 
-Install this (toddpkgs-ipfs-repo), then...
+Install this RPM pacage (toddpkgs-ipfs-repo), then...
 
-* For fedora:
   sudo dnf install go-ipfs -y --refresh
 
 You can edit /etc/yum.repos.d/ipfs.repo (as root) and 'enable=1' or '0'
@@ -87,6 +86,9 @@ install -D -m644 todd-694673ED-public-2030-01-04.2016-11-07.asc %{buildroot}%{_s
 
 
 %changelog
+* Sat Apr 06 2019 Todd Warner <t0dd at protonmail.com> 1.0-2.taw
+  - source URL change
+
 * Thu Apr 26 2018 Todd Warner <t0dd at protonmail.com> 1.0-1.taw
-- Initial build
+  - Initial build
 

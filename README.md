@@ -19,18 +19,18 @@ sudo dnf config-manager --set-enabled ipfs-testing
 sudo dnf list | grep ipfs
 ```
 
-## Install `go-ipfs` and add yourself to the `ipfsgroup`...
+## Install `go-ipfs` and add yourself to the `ipfs`...
 
 ```sh
 # Install IPFS
 sudo dnf install -y go-ipfs
 ```
 ```sh
-# Join the ipfsgroup so you have access to ipfs, the application
-sudo usermod -a -G ipfsgroup $USER
+# Join the ipfs so you have access to ipfs, the application
+sudo usermod -a -G ipfs $USER
 newgrp -
 groups
-# if you do not see ipfsgroup as one of your groups, force the relogin.
+# if you do not see ipfs as one of your groups, force the relogin.
 # sometime, for whatever reason, 'newgrp -' doesn't do what it is suppose to do
 sudo su -l $USER
 groups
