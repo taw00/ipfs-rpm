@@ -19,7 +19,7 @@ sudo dnf config-manager --set-enabled ipfs-testing
 sudo dnf list | grep ipfs
 ```
 
-## Install `go-ipfs` and add yourself to the `ipfs`...
+## Install `go-ipfs` and add yourself to the `ipfs` group...
 
 ```sh
 # Install IPFS
