@@ -9,6 +9,7 @@ sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo.noarch.rpm
 ```
 
+<!-- switching to one repository. I think, so commenting this out.
 ## Turn on test repo
 
 Right now we only have test RPMs. So, if you are brave...
@@ -18,6 +19,7 @@ sudo dnf config-manager --set-disabled ipfs-stable
 sudo dnf config-manager --set-enabled ipfs-testing
 sudo dnf list | grep ipfs
 ```
+-->
 
 ## Install `go-ipfs` and add yourself to the `ipfs` group...
 
