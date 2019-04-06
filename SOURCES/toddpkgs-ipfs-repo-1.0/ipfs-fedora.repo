@@ -1,0 +1,55 @@
+# Interplanetary Filesystem - "IPFS is the Distributed Web" (i.e. decentralized storage)
+# https://ipfs.io
+#
+# Packages for Fedora 64bit only
+#
+# DNF repository configuration
+# Drop this file, as root, into your /etc/yum.repos.d/ directory...
+#   cd /etc/yum.repos.d/
+#   sudo curl -O https://raw.githubusercontent.com/taw00/ipfs-rpm/master/ipfs-fedora.repo
+#   sudo dnf list | grep ipfs
+#
+# To install, for example the GUI client, you would do this at the commandline:
+#   sudo dnf install go-ipfs
+#
+# To update already existing software
+# Note: check https://z.cash to see if there are special upgrade steps that need to be taken.
+#   sudo dnf upgrade
+#
+# To switch from one repository version to the next (example, stable to testing)...
+#   sudo dnf config-manager --set-disabled ipfs-stable
+#   sudo dnf config-manager --set-enabled ipfs-testing
+#
+# Notes:
+# * This file is a convenience file that categorizes the releases nicely.
+#   If you are familiar with Fedora COPR, you can follow the direct enablement
+#   procedures here instead if you like:
+#   https://copr.fedorainfracloud.org/coprs/taw/ipfs/
+# * SRPMs (*.src.rpm files) are mingled with the binaries. It's just how Copr does it.
+#
+# Feedback: t0dd@protonmail.com
+
+[ipfs-stable]
+enabled=1
+name=IPFS - stable - fedora-$releasever-$basearch
+baseurl=https://copr-be.cloud.fedoraproject.org/results/taw/ipfs/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/taw/ipfs/pubkey.gpg
+repo_gpgcheck=0
+enabled_metadata=1
+metadata_expire=1d
+
+[ipfs-testing]
+enabled=0
+name=IPFS - testing - fedora-$releasever-$basearch
+baseurl=https://copr-be.cloud.fedoraproject.org/results/taw/ipfs-testing/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/taw/ipfs-testing/pubkey.gpg
+repo_gpgcheck=0
+enabled_metadata=1
+metadata_expire=1d
+
