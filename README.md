@@ -42,7 +42,7 @@ groups
 ## Where is everything installed?
 ```sh
 rpm -ql go-ipfs
-ll -h /usr/bin/ipfs
+ls -lh /usr/bin/ipfs
 ```
 
 ## How to use it?
