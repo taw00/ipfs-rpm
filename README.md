@@ -29,10 +29,13 @@ sudo dnf install -y go-ipfs
 # Join the ipfs so you have access to ipfs, the application
 sudo usermod -a -G ipfs $USER
 newgrp -
+getent group ipfs
 groups
+
 # if you do not see ipfs as one of your groups, force the relogin.
-# sometime, for whatever reason, 'newgrp -' doesn't do what it is suppose to do
+# if, for whatever reason, 'newgrp -' doesn't do what it is suppose to do
 sudo su -l $USER
+getent group ipfs
 groups
 ```
 
