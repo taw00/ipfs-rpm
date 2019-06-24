@@ -1,6 +1,0 @@
-#!/usr/bin/bash
-
-# To run this as a service, run it as -u ipfs
-# sudo -u ipfs -- IPFS_PATH=/var/lib/ipfs-repo /usr/bin/ipfs daemon --mount --mount-ipfs=/ipfs/ipfs/ipfs --mount-ipfn=/ipfs/ipfs/ipfn
-
-/usr/bin/ipfs daemon --mount --mount-ipfs=/ipfs/$USER/ipfs --mount-ipfn=/ipfs/$USER/ipfn

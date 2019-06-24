@@ -25,14 +25,14 @@ Summary: IPFS reference implementation.
 
 # VERSION
 %define vermajor 0.4
-%define verminor 19
+%define verminor 21
 Version: %{vermajor}.%{verminor}
 
 
 # RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.2
+  %define _pkgrel 0.1
 %endif
 
 # MINORBUMP
@@ -62,6 +62,7 @@ Version: %{vermajor}.%{verminor}
   %endif
 %endif
 
+# -- _release
 # pkgrel will always be defined, snapinfo and minorbump may not be
 %define _release %{_pkgrel}
 %if 0%{?snapinfo:1}
@@ -129,13 +130,14 @@ BuildRequires: git
 # https://fedoraproject.org/wiki/PackagingDrafts/Go
 #%%global import_path code.google.com/p/go.net
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
-ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64 ppc64le s390x
-BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
-BuildRequires:  golang(github.com/gorilla/mux) >= 0-0.13
+#ExclusiveArch:  %%{ix86} x86_64 %%{arm} aarch64 ppc64le s390x
+ExclusiveArch: x86_64
+#BuildRequires:  %%{?go_compiler:compiler(go-compiler)}%%{!?go_compiler:golang}
+#BuildRequires:  golang(github.com/gorilla/mux) >= 0-0.13
 Provides:       golang(%{import_path}) = %{version}-%{release}
 Provides:       golang(%{import_path}/dict) = %{version}-%{release}
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
-BuildRequires:  golang
+BuildRequires:  golang >= 1.11
 
 License: MIT
 URL: https://github.com/taw00/ipfs-rpm
@@ -412,6 +414,14 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Sun Jun 23 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.1.testing.taw
+  - 0.4.21
+  - not successfully building yet
+
+* Fri Apr 19 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.20-0.1.testing.taw
+  - 0.4.20
+  - not successfully building yet
+
 * Sat Apr 06 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.19-0.2.testing.taw
   - minor overhaul of the specfile
   - systemgroup is now ipfs instead of ipfsgroup -- please manually  
