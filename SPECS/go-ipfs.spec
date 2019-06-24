@@ -17,7 +17,7 @@ Name: go-ipfs
 Summary: IPFS reference implementation.
 
 %define targetIsProduction 0
-%define sourceIsBinary 0
+%define sourceIsBinary 1
 
 # ie. if the dev team includes things like rc1 or a date in the source filename
 %define buildQualifier rc1
@@ -32,7 +32,7 @@ Version: %{vermajor}.%{verminor}
 # RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.1
+  %define _pkgrel 0.3
 %endif
 
 # MINORBUMP
@@ -100,6 +100,9 @@ Release: %{_release}
   %define sourcetree %{sourcearchivename}
 %endif
 
+%define binaryarchivename %{name}_v%{version}_linux-amd64
+%define binarytree %{name}
+
 %define _gopath %{_builddir}/%{projectroot}/go
 %define _gobin %{_gopath}/bin
 %define gopathtosrc %{_gopath}/src/github.com/ipfs/go-ipfs
@@ -108,13 +111,21 @@ Release: %{_release}
 %define installtree %{_datadir}/%{name2}
 
 
+%if ! %{sourceIsBinary}
 %if 0%{?buildQualifier:1}
 Source0: https://github.com/dashpay/dash/archive/v%{version}-%{buildQualifier}/%{sourcearchivename}.tar.gz
 %else
 Source0: https://github.com/dashpay/dash/archive/v%{version}/%{sourcearchivename}.tar.gz
 %endif
+%endif
 
 Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
+
+%if %{sourceIsBinary}
+Source2: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{binaryarchivename}.tar.gz
+%endif
+
+
 
 # Most of the time, the build system can figure out the requires.
 # But if you need something specific...
@@ -124,7 +135,9 @@ Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}
 BuildRequires: tree vim-enhanced less findutils
 %endif
 
+%if ! %{sourceIsBinary}
 BuildRequires: git
+%endif
 
 # Go language specific stuff.
 # https://fedoraproject.org/wiki/PackagingDrafts/Go
@@ -132,12 +145,14 @@ BuildRequires: git
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 #ExclusiveArch:  %%{ix86} x86_64 %%{arm} aarch64 ppc64le s390x
 ExclusiveArch: x86_64
+%if ! %{sourceIsBinary}
 #BuildRequires:  %%{?go_compiler:compiler(go-compiler)}%%{!?go_compiler:golang}
 #BuildRequires:  golang(github.com/gorilla/mux) >= 0-0.13
 Provides:       golang(%{import_path}) = %{version}-%{release}
 Provides:       golang(%{import_path}/dict) = %{version}-%{release}
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
 BuildRequires:  golang >= 1.11
+%endif
 
 License: MIT
 URL: https://github.com/taw00/ipfs-rpm
@@ -197,19 +212,31 @@ For more info see: https://github.com/ipfs/ipfs.
 %endif
 
 mkdir -p %{projectroot}
+%if %{sourceIsBinary}
+# binary
+%setup -q -T -D -a 2 -n %{projectroot}
+%else
 # sourcecode
 %setup -q -T -D -a 0 -n %{projectroot}
+%endif
 # contrib
 %setup -q -T -D -a 1 -n %{projectroot}
 
+%if ! %{sourceIsBinary}
 # TODO: This is confusing. Simplify/clarify it.
 # {projectroot}/go/src/github.com/ipfs/go-ipfs -> /.../BUILD/{name}-{vermajor}/{name}-{version}
 mkdir -p %{gopathtosrc} %{_gobin}
 rmdir %{gopathtosrc} # pop the last dir
 ln -s %{_builddir}/%{projectroot}/%{sourcetree} %{gopathtosrc}
 ls -l %{gopathtosrc}
+%endif
+
 %if ! %{targetIsProduction}
+%if %{sourceIsBinary}
+tree -d %{_builddir}/%{projectroot}/%{binarytree}
+%else
 tree -d %{_builddir}/%{projectroot}/%{sourcetree}
+%endif
 %endif
 
 # Libraries ldconfig file - we create it, because lib or lib64
@@ -224,13 +251,16 @@ cd .. ; /usr/bin/tree -df -L 1 %{projectroot} ; cd -
 %build
 # This section starts us in directory {_builddir}/{projectroot}
 
+%if ! %{sourceIsBinary}
 cd %{sourcetree}
 export GOPATH=%{_gopath}
 export GOBIN=%{_gobin}
 # temporary - for testing RPM basic build structure
 # (uncomment this touch and comment out make install)
 #touch %{_gobin}/ipfs
+make build GOFLAGS=-tags=openssl
 make install
+%endif
 
 
 %install
@@ -287,11 +317,16 @@ install -d %{buildroot}%{_tmpfilesdir}
 
 # For now, we just install the binary in /usr/bin
 # Only members of the ipfs can do stuff with ipfs
+%if %{sourceIsBinary}
+install -D -m750 %{binarytree}/ipfs %{buildroot}%{_bindir}/
+%else
+
 install -D -m750 %{_gobin}/ipfs %{buildroot}%{_bindir}/
 
 # Bash completion
 # /usr/share/bash-completion/completions/...
 install -D -m644 %{sourcetree}/misc/completion/ipfs-completion.bash %{buildroot}%{_datadir}/bash-completion/completions/%{name2}
+%endif
 
 # Systemd services
 install -D -m600 -p %{sourcetree_contrib}/systemd/etc-sysconfig_ipfsd %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d
@@ -315,6 +350,10 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 #   but of final tweaking is often done in this section
 #
 %defattr(-,root,root,-)
+%if %{sourceIsBinary}
+%license %{binarytree}/LICENSE
+%doc %{binarytree}/README.md
+%else
 %license %{sourcetree}/LICENSE
 %doc %{sourcetree}/CHANGELOG.md
 %doc %{sourcetree}/CONTRIBUTING.md
@@ -324,6 +363,7 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %doc %{sourcetree}/docs/developer-certificate-of-origin
 %doc %{sourcetree}/docs/*.png
 %doc %{sourcetree}/docs/AUTHORS
+%endif
 
 # The directories...
 # /etc/ipfs/
@@ -365,8 +405,10 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipfn
 
 # Bash completion
+%if ! %{sourceIsBinary}
 # /usr/share/bash-completion/completions/...
 %{_datadir}/bash-completion/completions/%{name2}
+%endif
 
 # Binaries
 %attr(750,%{systemuser},%{systemgroup}) %{_bindir}/ipfs
@@ -414,12 +456,19 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Mon Jun 24 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.3.testing.rp.taw
+  - 0.4.21 repackage - binary build (have to set flag in specfile)
+
+* Mon Jun 24 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.2.testing.taw
 * Sun Jun 23 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.1.testing.taw
-  - 0.4.21
+  - 0.4.21 FAILED
+  - prestine source will not build (Fedora 29 and 30 don't ship go-1.12)
+  - modified go.mod and mk/golang.mk to allow 1.11  
+    still fails, but for other reasons
   - not successfully building yet
 
 * Fri Apr 19 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.20-0.1.testing.taw
-  - 0.4.20
+  - 0.4.20 FAILED
   - not successfully building yet
 
 * Sat Apr 06 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.19-0.2.testing.taw
