@@ -25,14 +25,14 @@ Summary: IPFS reference implementation.
 
 # VERSION
 %define vermajor 0.4
-%define verminor 21
+%define verminor 22
 Version: %{vermajor}.%{verminor}
 
 
 # RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.3
+  %define _pkgrel 0.1
 %endif
 
 # MINORBUMP
@@ -456,6 +456,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Wed Aug 14 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.22-0.1.testing.rp.taw
+  - 0.4.22 repackage - binary build (have to set flag in specfile)
+
 * Mon Jun 24 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.3.testing.rp.taw
   - 0.4.21 repackage - binary build (have to set flag in specfile)
 
