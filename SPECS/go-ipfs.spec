@@ -24,8 +24,8 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.4
-%define verminor 23
+%define vermajor 0.5
+%define verminor 1
 Version: %{vermajor}.%{verminor}
 
 
@@ -456,6 +456,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Thu May 14 2020 Todd Warner <t0dd_at_protonmail.com> 0.5.1-0.1.testing.rp.taw
+  - 0.5.1 repackage - binary build
+
 * Mon Feb 17 2020 Todd Warner <t0dd_at_protonmail.com> 0.4.23-0.1.testing.rp.taw
   - 0.4.23 repackage - binary build
 
