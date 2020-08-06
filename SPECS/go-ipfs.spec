@@ -24,8 +24,8 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.5
-%define verminor 1
+%define vermajor 0.6
+%define verminor 0
 Version: %{vermajor}.%{verminor}
 
 
@@ -85,8 +85,8 @@ Release: %{_release}
 
 # Project tree structure in .../BUILD directory:
 #   projectroot               go-ipfs-0.4
-#      \_sourcetree             \_go-ipfs-0.4.19
-#      \_sourcetree_contrib     \_go-ipfs-0.4-contrib
+#      \_sourcetree             \_go-ipfs-0.6.0
+#      \_sourcetree_contrib     \_go-ipfs-0.6-contrib
 #      \_ _gopath               \_go
 
 %define projectroot %{name}-%{vermajor}
@@ -456,6 +456,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Thu Aug 06 2020 Todd Warner <t0dd_at_protonmail.com> 0.6.0-0.1.testing.rp.taw
+  - 0.6.0 repackage - binary build
+
 * Thu May 14 2020 Todd Warner <t0dd_at_protonmail.com> 0.5.1-0.1.testing.rp.taw
   - 0.5.1 repackage - binary build
 
