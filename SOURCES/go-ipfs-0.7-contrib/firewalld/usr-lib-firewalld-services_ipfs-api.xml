@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ipfs-api.xml
+     Location if installed by an rpm: /usr/lib/firewalld/
+     Location if installed by a human: /etc/firewalld/services/ -->
+<service>
+  <short>IPFS API (and webui)</short>
+  <description>Intergalactic Filesystem default API port that also enables a
+WebUI for this decentralized storage technology.</description>
+  <port protocol="tcp" port="5001"/>
+</service>

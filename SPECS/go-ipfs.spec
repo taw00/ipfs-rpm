@@ -16,6 +16,9 @@ Name: go-ipfs
 %define name2 ipfs
 Summary: IPFS reference implementation.
 
+# Not currently used
+%define appid io.ipfs.%{name}
+
 %define targetIsProduction 0
 %define sourceIsBinary 1
 
@@ -24,7 +27,7 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.6
+%define vermajor 0.7
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
@@ -106,9 +109,6 @@ Release: %{_release}
 %define _gopath %{_builddir}/%{projectroot}/go
 %define _gobin %{_gopath}/bin
 %define gopathtosrc %{_gopath}/src/github.com/ipfs/go-ipfs
-
-# /usr/share/ipfs
-%define installtree %{_datadir}/%{name2}
 
 
 %if ! %{sourceIsBinary}
@@ -294,8 +294,6 @@ install -d %{buildroot}%{_sharedstatedir}/%{name2}
 install -d %{buildroot}%{_sharedstatedir}/%{name2}/repo
 # /var/log/ipfs/
 install -d -m750 %{buildroot}%{_localstatedir}/log/%{name2}
-# /usr/share/ipfs/
-install -d %{buildroot}%{installtree}
 
 # /ipfs/ -- directory for mountpoints ipfs and ipfn
 # Might end up building script for folks to do by username: /ipfs/todd/
@@ -456,6 +454,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Thu Sep 24 2020 Todd Warner <t0dd_at_protonmail.com> 0.7.0-0.1.testing.rp.taw
+  - 0.7.0 repackage - binary build
+
 * Thu Aug 06 2020 Todd Warner <t0dd_at_protonmail.com> 0.6.0-0.1.testing.rp.taw
   - 0.6.0 repackage - binary build
 
