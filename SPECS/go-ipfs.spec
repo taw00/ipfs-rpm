@@ -27,7 +27,7 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.7
+%define vermajor 0.8
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
@@ -454,6 +454,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Fri Feb 26 2020 Todd Warner <t0dd_at_protonmail.com> 0.8.0-0.1.testing.rp.taw
+  - repackage - binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.8.0
+
 * Thu Sep 24 2020 Todd Warner <t0dd_at_protonmail.com> 0.7.0-0.1.testing.rp.taw
   - 0.7.0 repackage - binary build
 
