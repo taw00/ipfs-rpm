@@ -4,10 +4,16 @@ This is all still in testing. Quick start...
 
 ## Install repository configuration RPM
 ```sh
+sudo dnf install -y dnf-plugins-core distribution-gpg-keys
+sudo dnf copr enable taw/ipfs
+```
+<!--
+```sh
 # Install Todd's public GPG key and the toddpkgs-ipfs-repo package
 sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo.noarch.rpm
 ```
+-->
 
 <!-- switching to one repository. I think, so commenting this out.
 ## Turn on test repo
@@ -25,7 +31,7 @@ sudo dnf list | grep ipfs
 
 ```sh
 # Install IPFS
-sudo dnf install -y go-ipfs
+sudo dnf install -y go-ipfs --refresh
 ```
 ```sh
 # Join the ipfs so you have access to ipfs, the application
