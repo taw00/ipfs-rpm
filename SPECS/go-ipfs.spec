@@ -27,8 +27,8 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.8
-%define verminor 0
+%define vermajor 0.9
+%define verminor 1
 Version: %{vermajor}.%{verminor}
 
 
@@ -113,16 +113,16 @@ Release: %{_release}
 
 %if ! %{sourceIsBinary}
 %if 0%{?buildQualifier:1}
-Source0: https://github.com/dashpay/dash/archive/v%{version}-%{buildQualifier}/%{sourcearchivename}.tar.gz
+Source0: https://github.com/ipfs/go-ipfs/archive/v%{version}-%{buildQualifier}/%{sourcearchivename}.tar.gz
 %else
-Source0: https://github.com/dashpay/dash/archive/v%{version}/%{sourcearchivename}.tar.gz
+Source0: https://github.com/ipfs/go-ipfs/archive/v%{version}/%{sourcearchivename}.tar.gz
 %endif
 %endif
 
 Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
 
 %if %{sourceIsBinary}
-Source2: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{binaryarchivename}.tar.gz
+Source2: https://github.com/ipfs/go-ipfs/releases/download/v%{version}/%{binaryarchivename}.tar.gz
 %endif
 
 
@@ -257,7 +257,7 @@ export GOPATH=%{_gopath}
 export GOBIN=%{_gobin}
 # temporary - for testing RPM basic build structure
 # (uncomment this touch and comment out make install)
-#touch %{_gobin}/ipfs
+#touch %%{_gobin}/ipfs
 make build GOFLAGS=-tags=openssl
 make install
 %endif
@@ -267,6 +267,10 @@ make install
 # This section starts us in directory {_builddir}/{projectroot}
 #
 # Cheatsheet for built-in RPM macros:
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/RPMMacros/
+#   _builddir = {_topdir}/BUILD
+#   _buildrootdir = {_topdir}/BUILDROOT
+#   buildroot = {_buildrootdir}/{name}-{version}-{release}.{_arch}
 #   _bindir = /usr/bin
 #   _sbindir = /usr/sbin
 #   _datadir = /usr/share
@@ -276,10 +280,20 @@ make install
 #   _sharedstatedir is /var/lib
 #   _prefix = /usr
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
-#   https://fedoraproject.org/wiki/Packaging:RPMMacros
-# These two are defined in RPM versions in newer versions of Fedora (not el7)
-%define _tmpfilesdir /usr/lib/tmpfiles.d
-%define _unitdir /usr/lib/systemd/system
+# The _rawlib define is used to quiet rpmlint who can't seem to understand
+# that /usr/lib is still used for certain things.
+%define _rawlib lib
+%define _usr_lib /usr/%{_rawlib}
+# These three are defined in some versions of RPM and not in others.
+%if ! 0%{?_unitdir:1}
+  %define _unitdir %{_usr_lib}/systemd/system
+%endif
+%if ! 0%{?_tmpfilesdir:1}
+  %define _tmpfilesdir %{_usr_lib}/tmpfiles.d
+%endif
+%if ! 0%{?_metainfodir:1}
+  %define _metainfodir %{_datadir}/metainfo
+%endif
 
 # Create directories
 # /usr/bin and /usr/sbin/
@@ -335,8 +349,8 @@ install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-systemd-system_ipfsd.s
 install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-tmpfiles.d_ipfsd.conf %{buildroot}%{_tmpfilesdir}/%{name2}d.conf
 
 # Service definition files for firewalld
-install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_ipfs-api.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name2}-api.xml
-install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_ipfs-gateway.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name2}-gateway.xml
+install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_ipfs-api.xml %{buildroot}%{_usr_lib}/firewalld/services/%{name2}-api.xml
+install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_ipfs-gateway.xml %{buildroot}%{_usr_lib}/firewalld/services/%{name2}-gateway.xml
 
 
 %files
@@ -381,8 +395,8 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %dir %attr(700,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name2}/repo
 
 # firewalld service definition
-%{_prefix}/lib/firewalld/services/%{name2}-api.xml
-%{_prefix}/lib/firewalld/services/%{name2}-gateway.xml
+%{_usr_lib}/firewalld/services/%{name2}-api.xml
+%{_usr_lib}/firewalld/services/%{name2}-gateway.xml
 
 # systemd service definitions, scripts, configuration
 %{_unitdir}/%{name2}d.service
@@ -447,14 +461,20 @@ umask 007
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
-#%clean
-## Once needed if you are building on old RHEL/CentOS.
-## No longer used.
-#rm -rf %{buildroot}
+#%%clean
+# # Once needed if you are building on old RHEL/CentOS.
+# # No longer used.
+# rm -rf %%{buildroot}
 
 
 %changelog
-* Fri Feb 26 2020 Todd Warner <t0dd_at_protonmail.com> 0.8.0-0.1.testing.rp.taw
+* Fri Jul 23 2021 Todd Warner <t0dd_at_protonmail.com> 0.9.1-0.1.testing.rp.taw
+  - repackage - binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.9.1
+  - fixed cut-n-paste errors in the specfile.
+  - fixed loads of specfile errors discovered by rpmlint
+  - genericized the rpm-version-specific macros
+
+* Fri Feb 26 2021 Todd Warner <t0dd_at_protonmail.com> 0.8.0-0.1.testing.rp.taw
   - repackage - binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.8.0
 
 * Thu Sep 24 2020 Todd Warner <t0dd_at_protonmail.com> 0.7.0-0.1.testing.rp.taw
