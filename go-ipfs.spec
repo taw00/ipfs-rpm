@@ -27,8 +27,8 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.9
-%define verminor 1
+%define vermajor 0.11
+%define verminor 0
 Version: %{vermajor}.%{verminor}
 
 
@@ -468,32 +468,35 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Tue Dec 14 2021 Todd Warner <t0dd_at_protonmail.com> 0.11.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.11.0
+
 * Fri Jul 23 2021 Todd Warner <t0dd_at_protonmail.com> 0.9.1-0.1.testing.rp.taw
-  - repackage - binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.9.1
+  - repackaged binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.9.1
   - fixed cut-n-paste errors in the specfile.
   - fixed loads of specfile errors discovered by rpmlint
   - genericized the rpm-version-specific macros
 
 * Fri Feb 26 2021 Todd Warner <t0dd_at_protonmail.com> 0.8.0-0.1.testing.rp.taw
-  - repackage - binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.8.0
+  - repackaged binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.8.0
 
 * Thu Sep 24 2020 Todd Warner <t0dd_at_protonmail.com> 0.7.0-0.1.testing.rp.taw
-  - 0.7.0 repackage - binary build
+  - 0.7.0 repackaged binary build
 
 * Thu Aug 06 2020 Todd Warner <t0dd_at_protonmail.com> 0.6.0-0.1.testing.rp.taw
-  - 0.6.0 repackage - binary build
+  - 0.6.0 repackaged binary build
 
 * Thu May 14 2020 Todd Warner <t0dd_at_protonmail.com> 0.5.1-0.1.testing.rp.taw
-  - 0.5.1 repackage - binary build
+  - 0.5.1 repackaged binary build
 
 * Mon Feb 17 2020 Todd Warner <t0dd_at_protonmail.com> 0.4.23-0.1.testing.rp.taw
-  - 0.4.23 repackage - binary build
+  - 0.4.23 repackaged binary build
 
 * Wed Aug 14 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.22-0.1.testing.rp.taw
-  - 0.4.22 repackage - binary build
+  - 0.4.22 repackaged binary build
 
 * Mon Jun 24 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.3.testing.rp.taw
-  - 0.4.21 repackage - binary build
+  - 0.4.21 repackaged binary build
 
 * Mon Jun 24 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.2.testing.taw
 * Sun Jun 23 2019 Todd Warner <t0dd_at_protonmail.com> 0.4.21-0.1.testing.taw
