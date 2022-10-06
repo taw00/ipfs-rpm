@@ -1,4 +1,4 @@
-# Interplanetary Filesystem (IPFS) RPMs for Fedora Linux
+# Kubo - Interplanetary Filesystem (IPFS) - RPMs for Fedora Linux
 
 This is all still in testing. Quick start...
 
@@ -27,11 +27,11 @@ sudo dnf list | grep ipfs
 ```
 -->
 
-## Install `go-ipfs` and add yourself to the `ipfs` group...
+## Install `kubo` RPM package and add yourself to the `ipfs` group...
 
 ```sh
 # Install IPFS
-sudo dnf install -y go-ipfs --refresh
+sudo dnf install -y kubo --refresh
 ```
 ```sh
 # Join the ipfs so you have access to ipfs, the application
@@ -49,13 +49,13 @@ groups
 
 ## Where is everything installed?
 ```sh
-rpm -ql go-ipfs
+rpm -ql kubo
 ls -lh /usr/bin/ipfs
 ```
 
 ## How to use it?
 
-Browse to <https://ipfs.io> and read the docs.
+Browse to <https://docs.ipfs.tech> and <https://ipfs.io/> and read the docs.
 
 ## Enjoy
 

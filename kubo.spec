@@ -1,4 +1,4 @@
-# go-ipfs.spec
+# kubo.spec
 # vim:tw=0:ts=2:sw=2:et:
 #
 # IPFS implementation in Go.
@@ -12,12 +12,12 @@
 # For more info see: https://github.com/ipfs/ipfs.
 
 # <name>-<vermajor.<verminor>-<pkgrel>[.<extraver>][.<snapinfo>].DIST[.<minorbump>]
-Name: go-ipfs
+Name: kubo
 %define name2 ipfs
 Summary: IPFS reference implementation.
 
 # Not currently used
-%define appid io.ipfs.%{name}
+%define appid tech.ipfs.%{name}
 
 %define targetIsProduction 0
 %define sourceIsBinary 1
@@ -27,8 +27,8 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.12
-%define verminor 2
+%define vermajor 0.16
+%define verminor 0
 Version: %{vermajor}.%{verminor}
 
 
@@ -113,16 +113,16 @@ Release: %{_release}
 
 %if ! %{sourceIsBinary}
 %if 0%{?buildQualifier:1}
-Source0: https://github.com/ipfs/go-ipfs/archive/v%{version}-%{buildQualifier}/%{sourcearchivename}.tar.gz
+Source0: https://github.com/ipfs/kubo/archive/v%{version}-%{buildQualifier}/%{sourcearchivename}.tar.gz
 %else
-Source0: https://github.com/ipfs/go-ipfs/archive/v%{version}/%{sourcearchivename}.tar.gz
+Source0: https://github.com/ipfs/kubo/archive/v%{version}/%{sourcearchivename}.tar.gz
 %endif
 %endif
 
 Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
 
 %if %{sourceIsBinary}
-Source2: https://github.com/ipfs/go-ipfs/releases/download/v%{version}/%{binaryarchivename}.tar.gz
+Source2: https://github.com/ipfs/kubo/releases/download/v%{version}/%{binaryarchivename}.tar.gz
 %endif
 
 
@@ -153,6 +153,10 @@ Provides:       golang(%{import_path}/dict) = %{version}-%{release}
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
 BuildRequires:  golang >= 1.11
 %endif
+
+# Name of package changed from go-ipfs to kubo
+Provides: go-ipfs = 0.16.0
+Obsoletes: go-ipfs < 0.16.0
 
 License: MIT
 URL: https://github.com/taw00/ipfs-rpm
@@ -194,7 +198,8 @@ bittorrent swarm, exchanging git objects. IPFS provides an interface as
 simple as the HTTP web, but with permanence built in. You can also mount the
 world at /ipfs.
 
-For more info see: https://github.com/ipfs/ipfs.
+For more info see:
+https://github.com/ipfs/ipfs https://ipfs.io and https://docs.ipfs.tech/
  
 
 
@@ -210,6 +215,11 @@ For more info see: https://github.com/ipfs/ipfs.
   %{error: "Build requires Fedora 29 or better due to outdated build tools (golang version in particular)"}
   exit 1
 %endif
+%if 0%{?fedora} && 0%{?fedora} < 35
+  %{error: "Build requires Fedora 35 or better."}
+  exit 1
+%endif
+
 
 mkdir -p %{projectroot}
 %if %{sourceIsBinary}
@@ -468,7 +478,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
-* The May 12 2022 Todd Warner <t0dd_at_protonmail.com> 0.12.2-0.1.testing.rp.taw
+* Thu Oct 6 2022 Todd Warner <t0dd_at_protonmail.com> 0.16.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.16.0
+
+* Thu May 12 2022 Todd Warner <t0dd_at_protonmail.com> 0.12.2-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/go-ipfs/releases/tag/v0.12.2
 
 * Tue Dec 14 2021 Todd Warner <t0dd_at_protonmail.com> 0.11.0-0.1.testing.rp.taw
