@@ -1,7 +1,7 @@
 # kubo.spec
 # vim:tw=0:ts=2:sw=2:et:
 #
-# IPFS implementation in Go.
+# Kubo: IPFS implementation in Go.
 #
 # IPFS is a global, versioned, peer-to-peer filesystem. It combines good ideas
 # from Git, BitTorrent, Kademlia, SFS, and the Web. It is like a single
@@ -27,7 +27,7 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.16
+%define vermajor 0.17
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
@@ -200,7 +200,7 @@ world at /ipfs.
 
 For more info see:
 https://github.com/ipfs/ipfs https://ipfs.io and https://docs.ipfs.tech/
- 
+
 
 
 %prep
@@ -478,6 +478,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Wed Nov 23 2022 Todd Warner <t0dd_at_protonmail.com> 0.17.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.17.0
+
 * Thu Oct 6 2022 Todd Warner <t0dd_at_protonmail.com> 0.16.0-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.16.0
 
