@@ -35,7 +35,7 @@ Version: %{vermajor}.%{verminor}
 # RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.1
+  %define _pkgrel 0.5
 %endif
 
 # MINORBUMP
@@ -129,7 +129,7 @@ Source2: https://github.com/ipfs/kubo/releases/download/v%{version}/%{binaryarch
 
 # Most of the time, the build system can figure out the requires.
 # But if you need something specific...
-#Requires:
+Requires: fuse
 
 %if ! %{targetIsProduction}
 BuildRequires: tree vim-enhanced less findutils
@@ -319,15 +319,15 @@ install -d %{buildroot}%{_sharedstatedir}/%{name2}/repo
 # /var/log/ipfs/
 install -d -m750 %{buildroot}%{_localstatedir}/log/%{name2}
 
-# /ipfs/ -- directory for mountpoints ipfs and ipfn
+# /ipfs/ -- directory for mountpoints ipfs and ipns
 # Might end up building script for folks to do by username: /ipfs/todd/
-# The systemd service allocates /ipfs/ipfsd.service/[ipfs,ipfn]
+# The systemd service allocates /ipfs/ipfsd.service/[ipfs,ipns]
 install -d %{buildroot}/%{name2}
 install -d %{buildroot}/%{name2}/%{name2}d
 install -d %{buildroot}/%{name2}/%{name2}d.service/ipfs
-install -d %{buildroot}/%{name2}/%{name2}d.service/ipfn
+install -d %{buildroot}/%{name2}/%{name2}d.service/ipns
 #install -d %%{buildroot}%%{name2}/%%{ipfs}
-#install -d %%{buildroot}%%{name2}/%%{ipfn}
+#install -d %%{buildroot}%%{name2}/%%{ipns}
 
 # Systemd...
 # /usr/lib/systemd/system/ -- 
@@ -352,9 +352,9 @@ install -D -m644 %{sourcetree}/misc/completion/ipfs-completion.bash %{buildroot}
 
 # Systemd services
 install -D -m600 -p %{sourcetree_contrib}/systemd/etc-sysconfig_ipfsd %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d
-install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/send-email.sh
+#DEPRECATED install -D -m755 -p %%{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_send-email.sh %%{buildroot}%%{_sysconfdir}/sysconfig/%%{name2}d-scripts/send-email.sh
 install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_ipfsd-init.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/%{name2}d-init.sh
-install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/write-to-journal.sh
+#DEPRECATED install -D -m755 -p %%{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_write-to-journal.sh %%{buildroot}%%{_sysconfdir}/sysconfig/%%{name2}d-scripts/write-to-journal.sh
 install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-systemd-system_ipfsd.service %{buildroot}%{_unitdir}/%{name2}d.service
 install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-tmpfiles.d_ipfsd.conf %{buildroot}%{_tmpfilesdir}/%{name2}d.conf
 
@@ -412,9 +412,9 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %{_unitdir}/%{name2}d.service
 %{_tmpfilesdir}/%{name2}d.conf
 %config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/%{name2}d
-%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/send-email.sh
+#DEPRECATED: %%attr(755,root,root) %%{_sysconfdir}/sysconfig/%%{name2}d-scripts/send-email.sh
 %attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/%{name2}d-init.sh
-%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/write-to-journal.sh
+#DEPRECATED %%attr(755,root,root) %%{_sysconfdir}/sysconfig/%%{name2}d-scripts/write-to-journal.sh
 
 # application configuration when run as systemd service
 #%%config(noreplace) %%attr(640,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/ipfs/ipfs.conf
@@ -424,7 +424,7 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %dir %attr(770,%{systemuser},%{systemgroup}) /%{name2}
 %dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service
 %dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipfs
-%dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipfn
+%dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipns
 
 # Bash completion
 %if ! %{sourceIsBinary}
@@ -478,7 +478,16 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
-* Sat 04 2023 Todd Warner <t0dd_at_protonmail.com> 0.18.1-0.1.testing.rp.taw
+* Wed May 10 2023 Todd Warner <t0dd_at_protonmail.com> 0.18.1-0.5.testing.rp.taw
+* Wed May 10 2023 Todd Warner <t0dd_at_protonmail.com> 0.18.1-0.4.testing.rp.taw
+* Wed May 10 2023 Todd Warner <t0dd_at_protonmail.com> 0.18.1-0.3.testing.rp.taw
+* Wed May 10 2023 Todd Warner <t0dd_at_protonmail.com> 0.18.1-0.2.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.18.1
+  - Simplifying the systemd stuff and nuking the emaily stuff (thank you github user jbash)
+  - s/ipfn/ipns because .. GAH! How did this ever work?
+  - added fuse dependency
+
+* Sat Feb 04 2023 Todd Warner <t0dd_at_protonmail.com> 0.18.1-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.18.1
 
 * Wed Nov 23 2022 Todd Warner <t0dd_at_protonmail.com> 0.17.0-0.1.testing.rp.taw
