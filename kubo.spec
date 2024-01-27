@@ -27,7 +27,7 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.20
+%define vermajor 0.26
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
@@ -478,6 +478,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Thu Jan 27 2024 Todd Warner <t0dd_at_protonmail.com> 0.26.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.26.0
+
 * Thu May 11 2023 Todd Warner <t0dd_at_protonmail.com> 0.20.0-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.20.0
 
