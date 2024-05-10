@@ -1,0 +1,31 @@
+# Note: You should probably try to make configuration changes by
+# editing /etc/sysconfig/ipfsd instead of by directly modifying this unit
+# file.
+
+[Unit]
+Description=ipfs daemon
+After=syslog.target network.target
+
+[Service]
+Type=exec
+User=ipfs
+Group=ipfs
+EnvironmentFile=/etc/sysconfig/ipfsd
+
+# Make sure repository and mount points are set up before daemon starts
+ExecStartPre=-/etc/sysconfig/ipfsd-scripts/ipfsd-init.sh $JOURNAL_IDENTIFIER $AUTO_INIT $IPFS_PATH $MOUNTPOINT_IPFS $MOUNTPOINT_IPNS
+
+ExecStart=/usr/bin/ipfs daemon --mount --mount-ipfs=${MOUNTPOINT_IPFS} --mount-ipns=${MOUNTPOINT_IPNS}
+
+# Allow 60 seconds for graceful shutdown after a SIGTERM before resorting
+# to strong measures.
+TimeoutStopSec=90
+
+# If something triggers an auto-restart, let's wait a bit before taking further action
+Restart=on-failure
+RestartSec=10
+
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
