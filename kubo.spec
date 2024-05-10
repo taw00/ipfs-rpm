@@ -27,7 +27,7 @@ Summary: IPFS reference implementation.
 %undefine buildQualifier
 
 # VERSION
-%define vermajor 0.27
+%define vermajor 0.28
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
@@ -87,13 +87,13 @@ Release: %{_release}
 
 
 # Project tree structure in .../BUILD directory:
-#   projectroot               go-ipfs-0.4
-#      \_sourcetree             \_go-ipfs-0.6.0
-#      \_sourcetree_contrib     \_go-ipfs-0.6-contrib
+#   projectroot               kubo-0.28
+#      \_sourcetree             \_kubo-0.28.0
+#      \_sourcetree_contrib     \_kubop-contrib
 #      \_ _gopath               \_go
 
 %define projectroot %{name}-%{vermajor}
-%define sourcetree_contrib %{name}-%{vermajor}-contrib
+%define sourcetree_contrib %{name}-contrib
 
 %if 0%{?buildQualifier:1}
   %define sourcearchivename %{name}-%{version}-%{buildQualifier}
@@ -119,7 +119,7 @@ Source0: https://github.com/ipfs/kubo/archive/v%{version}/%{sourcearchivename}.t
 %endif
 %endif
 
-Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
+Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}-contrib.tar.gz
 
 %if %{sourceIsBinary}
 Source2: https://github.com/ipfs/kubo/releases/download/v%{version}/%{binaryarchivename}.tar.gz
@@ -478,6 +478,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Fri May 10 2024 Todd Warner <t0dd_at_protonmail.com> 0.28.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.28.0
+
 * Tue Mar 5 2024 Todd Warner <t0dd_at_protonmail.com> 0.27.0-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.27.0
 
