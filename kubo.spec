@@ -19,28 +19,24 @@ Summary: IPFS reference implementation.
 # Not currently used
 %define appid tech.ipfs.%{name}
 
-%define targetIsProduction 0
+%define isTestBuild 1
 %define sourceIsBinary 1
 
-# ie. if the dev team includes things like rc1 or a date in the source filename
-%define buildQualifier rc1
-%undefine buildQualifier
 
 # VERSION
-%define vermajor 0.28
+%define vermajor 0.31
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
 
 # RELEASE
 %define _pkgrel 1
-%if ! %{targetIsProduction}
-  %define _pkgrel 0.1
+%if %{isTestBuild}
+  %define _pkgrel 0.2
 %endif
 
 # MINORBUMP
 %define minorbump taw
-#%%define minorbump taw
 
 #
 # Build the release string - don't edit this
@@ -51,18 +47,10 @@ Version: %{vermajor}.%{verminor}
 %define _repackaged rp
 %undefine snapinfo
 
-%if %{targetIsProduction}
-  %if %{sourceIsBinary}
-    %define snapinfo %{_repackaged}
-  %else
-    %undefine snapinfo
-  %endif
+%if %{isTestBuild}
+  %define snapinfo %{_snapinfo}.%{_repackaged}
 %else
-  %if %{sourceIsBinary}
-    %define snapinfo %{_snapinfo}.%{_repackaged}
-  %else
-    %define snapinfo %{_snapinfo}
-  %endif
+  %define snapinfo %{_repackaged}
 %endif
 
 # -- _release
@@ -87,21 +75,13 @@ Release: %{_release}
 
 
 # Project tree structure in .../BUILD directory:
-#   projectroot               kubo-0.28
-#      \_sourcetree             \_kubo-0.28.0
+#   projectroot               kubo-0.31
+#      \_sourcetree             \_kubo-0.31.0
 #      \_sourcetree_contrib     \_kubop-contrib
 #      \_ _gopath               \_go
 
 %define projectroot %{name}-%{vermajor}
 %define sourcetree_contrib %{name}-contrib
-
-%if 0%{?buildQualifier:1}
-  %define sourcearchivename %{name}-%{version}-%{buildQualifier}
-  %define sourcetree %{sourcearchivename}-%{buildQualifier}
-%else
-  %define sourcearchivename %{name}-%{version}
-  %define sourcetree %{sourcearchivename}
-%endif
 
 %define binaryarchivename %{name}_v%{version}_linux-amd64
 %define binarytree %{name}
@@ -110,49 +90,20 @@ Release: %{_release}
 %define _gobin %{_gopath}/bin
 %define gopathtosrc %{_gopath}/src/github.com/ipfs/go-ipfs
 
-
-%if ! %{sourceIsBinary}
-%if 0%{?buildQualifier:1}
-Source0: https://github.com/ipfs/kubo/archive/v%{version}-%{buildQualifier}/%{sourcearchivename}.tar.gz
-%else
-Source0: https://github.com/ipfs/kubo/archive/v%{version}/%{sourcearchivename}.tar.gz
-%endif
-%endif
-
 Source1: https://raw.githubusercontent.com/taw00/ipfs-rpm/master/SOURCES/%{name}-contrib.tar.gz
-
-%if %{sourceIsBinary}
 Source2: https://github.com/ipfs/kubo/releases/download/v%{version}/%{binaryarchivename}.tar.gz
-%endif
-
-
 
 # Most of the time, the build system can figure out the requires.
 # But if you need something specific...
 Requires: fuse
 
-%if ! %{targetIsProduction}
+%if %{isTestBuild}
 BuildRequires: tree vim-enhanced less findutils
 %endif
 
-%if ! %{sourceIsBinary}
-BuildRequires: git
-%endif
-
-# Go language specific stuff.
-# https://fedoraproject.org/wiki/PackagingDrafts/Go
-#%%global import_path code.google.com/p/go.net
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 #ExclusiveArch:  %%{ix86} x86_64 %%{arm} aarch64 ppc64le s390x
 ExclusiveArch: x86_64
-%if ! %{sourceIsBinary}
-#BuildRequires:  %%{?go_compiler:compiler(go-compiler)}%%{!?go_compiler:golang}
-#BuildRequires:  golang(github.com/gorilla/mux) >= 0-0.13
-Provides:       golang(%{import_path}) = %{version}-%{release}
-Provides:       golang(%{import_path}/dict) = %{version}-%{release}
-# If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
-BuildRequires:  golang >= 1.11
-%endif
 
 # Name of package changed from go-ipfs to kubo
 Provides: go-ipfs = 0.16.0
@@ -161,7 +112,7 @@ Obsoletes: go-ipfs < 0.16.0
 License: MIT
 URL: https://github.com/taw00/ipfs-rpm
 # Group is deprecated. Don't use it. Left this here as a reminder...
-# https://fedoraproject.org/wiki/RPMGroups 
+# https://fedoraproject.org/wiki/RPMGroups
 #Group: Unspecified
 
 # CHANGE or DELETE this for your package
@@ -222,55 +173,26 @@ https://github.com/ipfs/ipfs https://ipfs.io and https://docs.ipfs.tech/
 
 
 mkdir -p %{projectroot}
-%if %{sourceIsBinary}
 # binary
 %setup -q -T -D -a 2 -n %{projectroot}
-%else
-# sourcecode
-%setup -q -T -D -a 0 -n %{projectroot}
-%endif
 # contrib
 %setup -q -T -D -a 1 -n %{projectroot}
 
-%if ! %{sourceIsBinary}
-# TODO: This is confusing. Simplify/clarify it.
-# {projectroot}/go/src/github.com/ipfs/go-ipfs -> /.../BUILD/{name}-{vermajor}/{name}-{version}
-mkdir -p %{gopathtosrc} %{_gobin}
-rmdir %{gopathtosrc} # pop the last dir
-ln -s %{_builddir}/%{projectroot}/%{sourcetree} %{gopathtosrc}
-ls -l %{gopathtosrc}
-%endif
-
-%if ! %{targetIsProduction}
-%if %{sourceIsBinary}
+%if %{isTestBuild}
 tree -d %{_builddir}/%{projectroot}/%{binarytree}
-%else
-tree -d %{_builddir}/%{projectroot}/%{sourcetree}
-%endif
 %endif
 
 # Libraries ldconfig file - we create it, because lib or lib64
 echo "%{_libdir}/%{name2}" > %{sourcetree_contrib}/etc-ld.so.conf.d_%{name2}.conf
 
 # For debugging purposes...
-%if ! %{targetIsProduction}
+%if %{isTestBuild}
 cd .. ; /usr/bin/tree -df -L 1 %{projectroot} ; cd -
 %endif
 
 
 %build
 # This section starts us in directory {_builddir}/{projectroot}
-
-%if ! %{sourceIsBinary}
-cd %{sourcetree}
-export GOPATH=%{_gopath}
-export GOBIN=%{_gobin}
-# temporary - for testing RPM basic build structure
-# (uncomment this touch and comment out make install)
-#touch %%{_gobin}/ipfs
-make build GOFLAGS=-tags=openssl
-make install
-%endif
 
 
 %install
@@ -339,22 +261,11 @@ install -d %{buildroot}%{_tmpfilesdir}
 
 # For now, we just install the binary in /usr/bin
 # Only members of the ipfs can do stuff with ipfs
-%if %{sourceIsBinary}
 install -D -m750 %{binarytree}/ipfs %{buildroot}%{_bindir}/
-%else
-
-install -D -m750 %{_gobin}/ipfs %{buildroot}%{_bindir}/
-
-# Bash completion
-# /usr/share/bash-completion/completions/...
-install -D -m644 %{sourcetree}/misc/completion/ipfs-completion.bash %{buildroot}%{_datadir}/bash-completion/completions/%{name2}
-%endif
 
 # Systemd services
 install -D -m600 -p %{sourcetree_contrib}/systemd/etc-sysconfig_ipfsd %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d
-#DEPRECATED install -D -m755 -p %%{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_send-email.sh %%{buildroot}%%{_sysconfdir}/sysconfig/%%{name2}d-scripts/send-email.sh
 install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_ipfsd-init.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name2}d-scripts/%{name2}d-init.sh
-#DEPRECATED install -D -m755 -p %%{sourcetree_contrib}/systemd/etc-sysconfig-ipfsd-scripts_write-to-journal.sh %%{buildroot}%%{_sysconfdir}/sysconfig/%%{name2}d-scripts/write-to-journal.sh
 install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-systemd-system_ipfsd.service %{buildroot}%{_unitdir}/%{name2}d.service
 install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-tmpfiles.d_ipfsd.conf %{buildroot}%{_tmpfilesdir}/%{name2}d.conf
 
@@ -372,33 +283,10 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 #   but of final tweaking is often done in this section
 #
 %defattr(-,root,root,-)
-%if %{sourceIsBinary}
 %license %{binarytree}/LICENSE
 %doc %{binarytree}/README.md
-%else
-%license %{sourcetree}/LICENSE
-%doc %{sourcetree}/CHANGELOG.md
-%doc %{sourcetree}/CONTRIBUTING.md
-%doc %{sourcetree}/CODEOWNERS
-%doc %{sourcetree}/ISSUE_TEMPLATE.md
-%doc %{sourcetree}/docs/*.md
-%doc %{sourcetree}/docs/developer-certificate-of-origin
-%doc %{sourcetree}/docs/*.png
-%doc %{sourcetree}/docs/AUTHORS
-%endif
 
 # The directories...
-# /etc/ipfs/
-#%%dir %%attr(750,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/%%{name2}
-# /var/log/ipfs/
-#%%dir %%attr(750,%%{systemuser},%%{systemgroup}) %%{_localstatedir}/log/%%{name2}
-# /etc/sysconfig/ipfsd-scripts/
-#%%dir %%attr(755,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/sysconfig/%%{name2}d-scripts
-# /usr/share/ipfs/
-#%%dir %%attr(755,%%{systemuser},%%{systemgroup}) %%{_datadir}/%%{name2}
-# /usr/[lib,lib64]/ipfs/
-#%%dir %%attr(755,root,root) %%{_libdir}/%%{name2}
-
 # /var/lib/ipfs/ -- also ipfs user's $HOME dir
 %dir %attr(750,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name2}
 # repo needs to be more secure since there is a private key involved...
@@ -412,12 +300,7 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %{_unitdir}/%{name2}d.service
 %{_tmpfilesdir}/%{name2}d.conf
 %config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/%{name2}d
-#DEPRECATED: %%attr(755,root,root) %%{_sysconfdir}/sysconfig/%%{name2}d-scripts/send-email.sh
 %attr(755,root,root) %{_sysconfdir}/sysconfig/%{name2}d-scripts/%{name2}d-init.sh
-#DEPRECATED %%attr(755,root,root) %%{_sysconfdir}/sysconfig/%%{name2}d-scripts/write-to-journal.sh
-
-# application configuration when run as systemd service
-#%%config(noreplace) %%attr(640,%%{systemuser},%%{systemgroup}) %%{_sysconfdir}/ipfs/ipfs.conf
 
 
 # Mountpoints
@@ -425,12 +308,6 @@ install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_i
 %dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service
 %dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipfs
 %dir %attr(750,%{systemuser},%{systemgroup}) /%{name2}/ipfsd.service/ipns
-
-# Bash completion
-%if ! %{sourceIsBinary}
-# /usr/share/bash-completion/completions/...
-%{_datadir}/bash-completion/completions/%{name2}
-%endif
 
 # Binaries
 %attr(750,%{systemuser},%{systemgroup}) %{_bindir}/ipfs
@@ -478,6 +355,16 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Tue Nov 12 2024 Todd Warner <t0dd_at_protonmail.com> 0.31.0-0.2.testing.rp.taw
+  - stripped out the build instructions
+  - flipped the "is this a test build" logic bit
+
+* Tue Nov 12 2024 Todd Warner <t0dd_at_protonmail.com> 0.31.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.31.0
+
+* Fri Aug 30 2024 Todd Warner <t0dd_at_protonmail.com> 0.29.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.29.0
+
 * Fri May 10 2024 Todd Warner <t0dd_at_protonmail.com> 0.28.0-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.28.0
 
