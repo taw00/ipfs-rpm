@@ -37,7 +37,11 @@ sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/todd
 sudo dnf install -y kubo --refresh
 ```
 
-(3) Join the `ipfs` group so you have access to `ipfs`, the application  
+(3) Join the `ipfs` group so you have access to `ipfs`, the application
+
+> *Note, I, personally, create a user `ipfsuser` on my servers and give
+> permission only to that user to run IPFS. And I run kubo (ipfs) as a systemd
+> service. Adapt these generic instructions to match your usage model.*
 
 ```sh
 sudo usermod -a -G ipfs $USER
