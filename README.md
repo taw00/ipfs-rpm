@@ -52,7 +52,7 @@ getent group ipfs
 groups
 ```
 
-&nbps;
+&nbsp;
 
 #### Where is everything installed?
 
@@ -61,7 +61,7 @@ rpm -ql kubo
 ls -lh /usr/bin/ipfs
 ```
 
-&nbps;
+&nbsp;
 
 #### How to use it?
 
