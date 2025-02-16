@@ -63,7 +63,7 @@ ls -lh /usr/bin/ipfs
 
 &nbsp;
 
-#### How to use it?
+#### How to use
 
 - Browse to <https://docs.ipfs.tech> and <https://ipfs.io/> and read the docs. 
 
