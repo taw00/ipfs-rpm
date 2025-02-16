@@ -54,20 +54,18 @@ groups
 
 &nbsp;
 
-#### Where is everything installed?
+### Where is everything installed?
 
 ```sh
 rpm -ql kubo
 ls -lh /usr/bin/ipfs
 ```
 
-&nbsp;
-
-#### How to use
+### How to use
 
 - Browse to <https://docs.ipfs.tech> and <https://ipfs.io/> and read the docs. 
 
-#### See also
+### See also
 
 - The Fedora RPM build github repo: <https://github.com/taw00/ipfs-rpm>
 - The upstream Kubo project: <https://github.com/ipfs/kubo>
