@@ -41,7 +41,9 @@ sudo dnf install -y kubo --refresh
 
 > *Note, I, personally, create a user `ipfsuser` on my servers and give
 > permission only to that user to run IPFS. And I run kubo (ipfs) as a systemd
-> service. Adapt these generic instructions to match your usage model.*
+> service. (In that case, replace `$USER` with `ipfsuser`.) Adapt these generic
+> instructions to match your usage model.*
+
 
 ```sh
 sudo usermod -a -G ipfs $USER
