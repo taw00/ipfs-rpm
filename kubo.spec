@@ -24,15 +24,15 @@ Summary: IPFS reference implementation.
 
 
 # VERSION
-%define vermajor 0.31
-%define verminor 0
+%define vermajor 0.33
+%define verminor 2
 Version: %{vermajor}.%{verminor}
 
 
 # RELEASE
 %define _pkgrel 1
 %if %{isTestBuild}
-  %define _pkgrel 0.2
+  %define _pkgrel 0.1
 %endif
 
 # MINORBUMP
@@ -355,6 +355,12 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Sun Feb 16 2025 Todd Warner <t0dd_at_protonmail.com> 0.33.2-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.33.2
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.33.1
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.33.0
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.32.1
+
 * Tue Nov 12 2024 Todd Warner <t0dd_at_protonmail.com> 0.31.0-0.2.testing.rp.taw
   - stripped out the build instructions
   - flipped the "is this a test build" logic bit

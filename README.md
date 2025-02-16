@@ -1,40 +1,45 @@
 # Kubo - Interplanetary Filesystem (IPFS) - RPMs for Fedora Linux
 
-This is all still in testing. Quick start...
+IPFS is a global, versioned, peer-to-peer filesystem. It combines good ideas
+from Git, BitTorrent, Kademlia, SFS, and the Web. It is like a single
+bittorrent swarm, exchanging git objects. IPFS provides an interface as
+simple as the HTTP web, but with permanence built in. You can also mount the
+world at /ipfs.
 
-## Install repository configuration RPM
+For more info about IPFS itself, see: <https://github.com/ipfs/ipfs> and <https://github.com/ipfs/kubo>
+
+---
+
+
+### Installation
+
+**For Fedora and 64bit only.**
+
+(1) First enable the COPR repository
+
 ```sh
 sudo dnf install -y dnf-plugins-core distribution-gpg-keys
 sudo dnf copr enable taw/ipfs
 ```
+
 <!--
+(1) First install Todd's public GPG key and the `toddpkgs-ipfs-repo` package
+
 ```sh
-# Install Todd's public GPG key and the toddpkgs-ipfs-repo package
 sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/ipfs-rpm/master/toddpkgs-ipfs-repo.noarch.rpm
 ```
 -->
 
-<!-- switching to one repository. I think, so commenting this out.
-## Turn on test repo
-
-Right now we only have test RPMs. So, if you are brave...
-```sh
-# Flip the enabled repository from stable to testing
-sudo dnf config-manager --set-disabled ipfs-stable
-sudo dnf config-manager --set-enabled ipfs-testing
-sudo dnf list | grep ipfs
-```
--->
-
-## Install `kubo` RPM package and add yourself to the `ipfs` group...
+(2) Then install IPFS (of the [Kubo](https://github.com/ipfs/kubo) variety) …
 
 ```sh
-# Install IPFS
 sudo dnf install -y kubo --refresh
 ```
+
+(3) Join the `ipfs` group so you have access to `ipfs`, the application  
+
 ```sh
-# Join the ipfs so you have access to ipfs, the application
 sudo usermod -a -G ipfs $USER
 newgrp -
 getent group ipfs
@@ -47,15 +52,28 @@ getent group ipfs
 groups
 ```
 
-## Where is everything installed?
+&nbps;
+
+#### Where is everything installed?
+
 ```sh
 rpm -ql kubo
 ls -lh /usr/bin/ipfs
 ```
 
-## How to use it?
+&nbps;
 
-Browse to <https://docs.ipfs.tech> and <https://ipfs.io/> and read the docs.
+#### How to use it?
+
+- Browse to <https://docs.ipfs.tech> and <https://ipfs.io/> and read the docs. 
+
+#### See also
+
+- The Fedora RPM build github repo: <https://github.com/taw00/ipfs-rpm>
+- The upstream Kubo project: <https://github.com/ipfs/kubo>
+- The upstream IPFS project: <https://github.com/ipfs/ipfs>
+
+---
 
 ## Enjoy
 
