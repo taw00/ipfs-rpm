@@ -32,7 +32,7 @@ Version: %{vermajor}.%{verminor}
 # RELEASE
 %define _pkgrel 1
 %if %{isTestBuild}
-  %define _pkgrel 0.1
+  %define _pkgrel 0.2
 %endif
 
 # MINORBUMP
@@ -355,6 +355,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Sun Feb 16 2025 Todd Warner <t0dd_at_protonmail.com> 0.33.2-0.2.testing.rp.taw
+  - includes improvements to systemd script (thank you vorburger (github))
+
 * Sun Feb 16 2025 Todd Warner <t0dd_at_protonmail.com> 0.33.2-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.33.2
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.33.1
