@@ -30,9 +30,9 @@ Version: %{vermajor}.%{verminor}
 
 
 # RELEASE
-%define _pkgrel 1
+%define _pkgrel 2
 %if %{isTestBuild}
-  %define _pkgrel 0.1
+  %define _pkgrel 1.1
 %endif
 
 # MINORBUMP
@@ -100,6 +100,10 @@ Requires: fuse
 %if %{isTestBuild}
 BuildRequires: tree vim-enhanced less findutils
 %endif
+
+#BuildRequires:  sysuser-tools
+Provides: user(ipfs)
+Provides: group(ipfs)
 
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 #ExclusiveArch:  %%{ix86} x86_64 %%{arm} aarch64 ppc64le s390x
@@ -355,6 +359,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Wed Nov 5 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-2.rp.taw
+* Wed Nov 5 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-1.1.testing.rp.taw
+  - resolved packaging issue associated provided ipfs user and group
+
 * Fri Oct 3 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-1.rp.taw
 * Fri Oct 3 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.38.2
