@@ -24,15 +24,15 @@ Summary: IPFS reference implementation.
 
 
 # VERSION
-%define vermajor 0.38
-%define verminor 2
+%define vermajor 0.39
+%define verminor 0
 Version: %{vermajor}.%{verminor}
 
 
 # RELEASE
-%define _pkgrel 2
+%define _pkgrel 1
 %if %{isTestBuild}
-  %define _pkgrel 1.1
+  %define _pkgrel 0.1
 %endif
 
 # MINORBUMP
@@ -359,9 +359,13 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Sat Nov 29 2025 Todd Warner <t0dd_at_protonmail.com> 0.39-1.rp.taw
+* Sat Nov 29 2025 Todd Warner <t0dd_at_protonmail.com> 0.39-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.39.0
+
 * Wed Nov 5 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-2.rp.taw
 * Wed Nov 5 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-1.1.testing.rp.taw
-  - resolved packaging issue associated provided ipfs user and group
+  - resolved packaging issue associated with providing ipfs user and group
 
 * Fri Oct 3 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-1.rp.taw
 * Fri Oct 3 2025 Todd Warner <t0dd_at_protonmail.com> 0.38.2-0.1.testing.rp.taw
