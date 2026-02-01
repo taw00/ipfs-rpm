@@ -2,7 +2,7 @@
 # https://ipfs.io
 # https://github.com/taw00/ipfs-rpm
 #
-# Feedback: t0dd@protonmail.com
+# Feedback: t0dd_at_protonmail_dot_com
 
 [ipfs-stable]
 enabled=1

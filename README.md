@@ -81,4 +81,6 @@ ls -lh /usr/bin/ipfs
 
 ## Enjoy
 
-Comments and feedback: t0dd\@protonmail\.com
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>
+
