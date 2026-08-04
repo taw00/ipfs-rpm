@@ -24,7 +24,7 @@ Summary: IPFS reference implementation.
 
 
 # VERSION
-%define vermajor 0.42
+%define vermajor 0.43
 %define verminor 0
 Version: %{vermajor}.%{verminor}
 
@@ -359,6 +359,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Tue Aug 4 2026 Todd Warner <t0dd_at_protonmail.com> 0.43.0-1.rp.taw
+* Tue Aug 4 2026 Todd Warner <t0dd_at_protonmail.com> 0.43.0-0.1.testing.rp.taw
+  - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.43.0
+
 * Wed Jun 17 2026 Todd Warner <t0dd_at_protonmail.com> 0.42.0-1.rp.taw
 * Wed Jun 17 2026 Todd Warner <t0dd_at_protonmail.com> 0.42.0-0.1.testing.rp.taw
   - repackaged binary build - https://github.com/ipfs/kudo/releases/tag/v0.42.0
